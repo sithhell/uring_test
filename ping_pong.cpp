@@ -234,7 +234,6 @@ struct server_connection : base_operation {
         auto* sqe = get_sqe(ring);
         ::io_uring_prep_send(
             sqe, socket_, response_.data(), response_.size(), MSG_NOSIGNAL);
-        sqe->ioprio |= IORING_RECVSEND_POLL_FIRST;
         sqe->flags |= IOSQE_FIXED_FILE;
         sqe->user_data = encode_userdata(operation_type::send, this);
     }
@@ -592,7 +591,6 @@ struct client_connection : base_operation {
                              send_buffer_.size() - bytes_sent,
                              MSG_NOSIGNAL);
         sqe->flags |= IOSQE_FIXED_FILE;
-        sqe->ioprio |= IORING_RECVSEND_POLL_FIRST;
         sqe->user_data = encode_userdata(operation_type::send, this);
     }
 

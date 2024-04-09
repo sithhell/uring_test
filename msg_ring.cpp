@@ -43,6 +43,7 @@ void event_loop()
     flags |= IORING_SETUP_DEFER_TASKRUN;
     rc = ::io_uring_queue_init(1024, &event_ring, flags);
     throw_error_code_if(rc < 0, -rc);
+    ::io_uring_register_ring_fd(&event_ring);
 
     event_loop_running = true;
 
@@ -84,9 +85,10 @@ void dispatch()
 
     int rc{0};
     int flags = IORING_SETUP_SINGLE_ISSUER;
-    flags |= IORING_SETUP_DEFER_TASKRUN;
+    //flags |= IORING_SETUP_DEFER_TASKRUN;
     rc = ::io_uring_queue_init(1024, &dispatch_ring, flags);
     throw_error_code_if(rc < 0, -rc);
+    ::io_uring_register_ring_fd(&dispatch_ring);
 
     message_dispatch msg;
     for (std::size_t i = 0; i != num_messages; ++i)
